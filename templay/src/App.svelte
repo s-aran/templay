@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/tauri";
   import Editor from "./lib/components/Editor.svelte";
   import Greet from "./lib/components/Greet.svelte";
   import Selector from "./lib/components/Selector.svelte";
   import SettingsDialog from "./lib/components/SettingsDialog.svelte";
+  import { onMount } from "svelte";
 
   let content = "";
 
@@ -15,10 +17,28 @@
   };
 
   let showDialog = false;
-  const config = {};
+  let config: Config = {
+    version: 0,
+    templates: [],
+    external_editor: {
+      command: "",
+      args: "",
+    },
+  };
+
+  onMount(async () => {
+    config = await invoke("load_config");
+    console.info(config);
+  });
+
+  $: {
+    if (!showDialog && config.version > 0) {
+      invoke("save_config", { config });
+    }
+  }
 </script>
 
-<SettingsDialog bind:showDialog></SettingsDialog>
+<SettingsDialog bind:showDialog settingsData={{ config }}></SettingsDialog>
 
 <main class="container">
   <div class="row">
