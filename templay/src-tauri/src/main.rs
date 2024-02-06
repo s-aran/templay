@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+pub mod config;
 pub mod executor;
 pub mod external_editor;
 
@@ -9,6 +10,7 @@ use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
+use config::config::Config;
 use external_editor::ArgParams;
 use serde::{Deserialize, Serialize};
 use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
@@ -17,36 +19,6 @@ use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu};
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct ConfigTemplate {
-    name: String,
-    content: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct ConfigExternalEditor {
-    name: String,
-    command: String,
-    args: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct Config {
-    version: u32,
-    external_editor: Option<ConfigExternalEditor>,
-    templates: Vec<ConfigTemplate>,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            version: 0,
-            external_editor: None,
-            templates: vec![],
-        }
-    }
 }
 
 struct ConfigState {
