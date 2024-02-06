@@ -1,8 +1,12 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
+  import { onMount } from "svelte";
 
-  let command = "";
-  let args = "";
+  export let data: Config;
+
+  $: {
+    console.warn(data);
+  }
 </script>
 
 <div>
@@ -13,7 +17,7 @@
   <h3>コマンドとパラメーター</h3>
 
   <h4>コマンド</h4>
-  <input bind:value={command} placeholder="command..." />
+  <input bind:value={data.external_editor.command} placeholder="command..." />
   <h4>引数</h4>
-  <input bind:value={args} placeholder="arguments..." />
+  <input bind:value={data.external_editor.args} placeholder="arguments..." />
 </div>

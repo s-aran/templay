@@ -4,7 +4,6 @@
 pub mod executor;
 pub mod external_editor;
 
-use std::env::temp_dir;
 use std::fs::{self, remove_file, File};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
@@ -26,8 +25,16 @@ struct ConfigTemplate {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+struct ConfigExternalEditor {
+    name: String,
+    command: String,
+    args: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 struct Config {
     version: u32,
+    external_editor: Option<ConfigExternalEditor>,
     templates: Vec<ConfigTemplate>,
 }
 
@@ -43,6 +50,14 @@ fn load_config() -> Result<Config, String> {
     let config: Config = toml::from_str(&toml_content.unwrap()).unwrap();
     println!("{:?}", config);
     Ok(config)
+}
+
+#[tauri::command]
+async fn save_config(config: Config) {
+    let mut file = File::create("config.toml").unwrap();
+    let toml_content = toml::to_string(&config).unwrap();
+    write!(file, "{}", toml_content).unwrap();
+    file.flush().unwrap();
 }
 
 fn initialize_tempfile(text: impl Into<String>) -> PathBuf {
@@ -115,6 +130,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             greet,
             load_config,
+            save_config,
             open_by_external_editor,
         ])
         .menu(menu)

@@ -1,0 +1,3 @@
+interface SettingsData {
+	config: Config;
+}
