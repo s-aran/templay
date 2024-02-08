@@ -2,8 +2,8 @@
   import { invoke } from "@tauri-apps/api/tauri";
 
   export let updateContentCallback: CallableFunction;
+  export let content = "";
 
-  let content = "";
   const onChange = (ev: Event) => {
     updateContentCallback(content);
   };

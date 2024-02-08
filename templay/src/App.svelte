@@ -2,9 +2,9 @@
   import { invoke } from "@tauri-apps/api/tauri";
   import Editor from "./lib/components/Editor.svelte";
   import Greet from "./lib/components/Greet.svelte";
-  import Selector from "./lib/components/Selector.svelte";
   import SettingsDialog from "./lib/components/SettingsDialog.svelte";
   import { onMount } from "svelte";
+  import TemplateSelector from "./lib/components/TemplateSelector.svelte";
 
   let content = "";
 
@@ -26,6 +26,11 @@
     },
   };
 
+  const onSelectUpdate = (selected: TemplateObject) => {
+    console.info(selected);
+    updateContent(selected.content);
+  };
+
   onMount(async () => {
     config = await invoke("load_config");
     console.info(config);
@@ -45,10 +50,17 @@
     <Greet />
   </div>
   <div>
-    <Selector />
+    <TemplateSelector
+      options={config.templates.map((e, i) => ({
+        id: i,
+        name: e.name,
+        content: e.content,
+      }))}
+      updateSelectCallback={onSelectUpdate}
+    />
   </div>
   <div>
-    <Editor updateContentCallback={updateContent} />
+    <Editor {content} updateContentCallback={updateContent} />
   </div>
 
   <button on:click={button_click}>test</button>
