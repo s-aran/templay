@@ -1,0 +1,14 @@
+version = 1
+
+[external_editor]
+name = "Notepad"
+command = "notepad"
+args = "{FilePath}"
+
+[[templates]]
+name = "sample1"
+content = "this is a pen."
+
+[[templates]]
+name = "sampleAA"
+content = "The quick brown fox jumps over the lazy dog"
