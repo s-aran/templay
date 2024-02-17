@@ -96,9 +96,7 @@ fn open_by_external_editor(state: tauri::State<'_, ConfigState>, text: String) -
     // edit
     let editor = external_editor::ExternalEditor::new(
         external_editor_config.name,
-        // "F:\\software\\vim\\vim90\\gvim.exe",
         external_editor_config.command,
-        // "F:\\software\\Notepad++\\notepad++.exe",
         external_editor_config.args,
     );
     let mut params = ArgParams::new();
