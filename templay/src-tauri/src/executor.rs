@@ -21,12 +21,23 @@ impl ExecutorInfo {
 }
 
 pub fn execute(info: ExecutorInfo) -> Result<i32, String> {
-    let out = std::process::Command::new(&info.path)
-        .args(&info.args)
-        .status()
-        .expect("failed to execute process");
+    #[cfg(target_os = "windows")]
+    let pre_command = "cmd.exe";
+    #[cfg(target_os = "windows")]
+    let mut pre_args = vec!["/C".to_owned(), "start".to_owned()];
+    #[cfg(target_os = "macos")]
+    let pre_command = "open";
+    #[cfg(target_os = "macos")]
+    let mut pre_args = vec!["-Wa".to_owned()];
+    // #[cfg(target_os = "linux")]
 
-    match out.code() {
+    pre_args.append(&mut info.args.clone());
+    let status = tauri::api::process::Command::new(pre_command)
+        .args(pre_args)
+        .status()
+        .unwrap();
+
+    match status.code() {
         Some(c) => Ok(c),
         None => Err("process terminated by signal".to_string()),
     }

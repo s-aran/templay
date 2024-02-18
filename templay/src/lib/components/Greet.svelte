@@ -5,6 +5,8 @@
   let name = "";
   let greetMsg = "";
 
+  let externalEditorIntervalId: number | undefined = undefined;
+
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     greetMsg = await invoke("greet", { name });
@@ -16,11 +18,26 @@
     console.info(await invoke("load_config"));
   }
 
-  async function open_by_external_editor() {
-    const result = (await invoke("open_by_external_editor", {
-      text: name,
-    })) as string;
-    name = result;
+  async function open_with_external_editor() {
+    if (!externalEditorIntervalId) {
+      clearInterval(externalEditorIntervalId);
+    }
+
+    // start interval handler
+    externalEditorIntervalId = setInterval(async () => {
+      console.info("Interval");
+      const p = invoke("read_tempfile");
+      // name = await invoke("read_tempfile");
+      p.then((n) => {
+        name = n as string;
+      });
+      p.catch((e) => {
+        console.error(e);
+      });
+      console.info(name);
+    }, 1000);
+
+    await invoke("open_with_external_editor", { text: name });
   }
 </script>
 
@@ -30,6 +47,6 @@
     <button type="submit">Greet</button>
   </form>
   <button on:click={load_config}>load</button>
-  <button on:click={open_by_external_editor}>Vim</button>
+  <button on:click={open_with_external_editor}>Vim</button>
   <p>{greetMsg}</p>
 </div>
