@@ -28,9 +28,10 @@ pub fn execute(info: ExecutorInfo) -> Result<i32, String> {
     #[cfg(target_os = "macos")]
     let pre_command = "open";
     #[cfg(target_os = "macos")]
-    let mut pre_args = vec!["-Wa".to_owned()];
+    let mut pre_args = vec!["-a".to_owned()];
     // #[cfg(target_os = "linux")]
 
+    pre_args.push(info.path);
     pre_args.append(&mut info.args.clone());
     let status = tauri::api::process::Command::new(pre_command)
         .args(pre_args)
