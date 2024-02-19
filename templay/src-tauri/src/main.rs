@@ -6,7 +6,7 @@ pub mod executor;
 pub mod external_editor;
 
 use std::fs::{self, remove_file, File};
-use std::io::{Read, Write};
+use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
@@ -65,15 +65,15 @@ fn initialize_tempfile(state: &tauri::State<'_, TemplayState>, text: impl Into<S
     if state.temporary_file.lock().unwrap().is_some() {
         // truncate temporary file
         let path = state.temporary_file.lock().unwrap().clone().unwrap();
-        // let mut file = File::create(&path).unwrap();
-        // file.set_len(0).unwrap();
-        // file.seek(SeekFrom::Start(0)).unwrap();
-        // match write!(file, "{}", text.into()) {
-        //     Ok(_) => {}
-        //     Err(e) => {
-        //         eprintln!("Error writing file: {:?}", e);
-        //     }
-        // }
+        let mut file = File::create(&path).unwrap();
+        file.set_len(0).unwrap();
+        file.seek(SeekFrom::Start(0)).unwrap();
+        match write!(file, "{}", text.into()) {
+            Ok(_) => {}
+            Err(e) => {
+                eprintln!("Error writing file: {:?}", e);
+            }
+        }
 
         return path;
     }
