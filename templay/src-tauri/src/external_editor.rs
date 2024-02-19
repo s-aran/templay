@@ -97,7 +97,7 @@ impl ExternalEditor {
         args
     }
 
-    pub fn execute(&self, params: ArgParams) -> bool {
+    pub fn execute(&self, params: ArgParams) {
         let args = self
             .replace_args(params)
             .split(" ")
@@ -107,6 +107,6 @@ impl ExternalEditor {
         println!("execute: {} {:?}", self.command.to_owned(), args);
         let info = ExecutorInfo::new(self.command.to_owned(), args);
 
-        executor::execute(info).is_ok()
+        executor::execute(info);
     }
 }

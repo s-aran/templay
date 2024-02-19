@@ -20,11 +20,11 @@ impl ExecutorInfo {
     }
 }
 
-pub fn execute(info: ExecutorInfo) -> Result<i32, String> {
+pub fn execute(info: ExecutorInfo) {
     #[cfg(target_os = "windows")]
     let pre_command = "cmd.exe";
     #[cfg(target_os = "windows")]
-    let mut pre_args = vec!["/C".to_owned(), "start".to_owned()];
+    let mut pre_args = vec!["/C".into(), "start".into(), r#""#.into()];
     #[cfg(target_os = "macos")]
     let pre_command = "open";
     #[cfg(target_os = "macos")]
@@ -33,13 +33,9 @@ pub fn execute(info: ExecutorInfo) -> Result<i32, String> {
 
     pre_args.push(info.path);
     pre_args.append(&mut info.args.clone());
-    let status = tauri::api::process::Command::new(pre_command)
+    tauri::api::process::Command::new(pre_command)
         .args(pre_args)
-        .status()
+        // .status()
+        .spawn()
         .unwrap();
-
-    match status.code() {
-        Some(c) => Ok(c),
-        None => Err("process terminated by signal".to_string()),
-    }
 }

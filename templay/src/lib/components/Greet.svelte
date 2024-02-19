@@ -25,7 +25,6 @@
 
     // start interval handler
     externalEditorIntervalId = setInterval(async () => {
-      console.info("Interval");
       const p = invoke("read_tempfile");
       // name = await invoke("read_tempfile");
       p.then((n) => {
@@ -43,7 +42,14 @@
 
 <div>
   <form class="row" on:submit|preventDefault={greet}>
-    <input id="greet-input" placeholder="Enter a name..." bind:value={name} />
+    <input
+      id="greet-input"
+      placeholder="Enter a name..."
+      bind:value={name}
+      on:focus={() => {
+        clearInterval(externalEditorIntervalId);
+      }}
+    />
     <button type="submit">Greet</button>
   </form>
   <button on:click={load_config}>load</button>
