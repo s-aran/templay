@@ -46,7 +46,7 @@
       id="greet-input"
       placeholder="Enter a name..."
       bind:value={name}
-      on:focus={() => {
+      on:input={() => {
         clearInterval(externalEditorIntervalId);
       }}
     />
