@@ -5,6 +5,7 @@
   import SettingsDialog from "./lib/components/SettingsDialog.svelte";
   import { onMount } from "svelte";
   import TemplateSelector from "./lib/components/TemplateSelector.svelte";
+  import AboutDialog from "./lib/components/AboutDialog.svelte";
 
   let content = "";
 
@@ -16,7 +17,7 @@
     console.info(content);
   };
 
-  let showDialog = false;
+  let showSettingsDialog = false;
   let config: Config = {
     version: 0,
     templates: [],
@@ -25,6 +26,8 @@
       args: "",
     },
   };
+
+  let showAboutDialog = false;
 
   const onSelectUpdate = (selected: TemplateObject) => {
     console.info(selected);
@@ -37,13 +40,15 @@
   });
 
   $: {
-    if (!showDialog && config.version > 0) {
+    if (!showSettingsDialog && config.version > 0) {
       invoke("save_config", { config });
     }
   }
 </script>
 
-<SettingsDialog bind:showDialog settingsData={{ config }}></SettingsDialog>
+<SettingsDialog bind:showDialog={showSettingsDialog} settingsData={{ config }}
+></SettingsDialog>
+<AboutDialog bind:showDialog={showAboutDialog}></AboutDialog>
 
 <main class="container">
   <div class="row">
@@ -64,5 +69,10 @@
   </div>
 
   <button on:click={button_click}>test</button>
-  <button on:click={() => (showDialog = true)}>Settings</button>
+  <button on:click={() => (showSettingsDialog = true)}>Settings</button>
+  <button
+    on:click={() => {
+      showAboutDialog = true;
+    }}>About</button
+  >
 </main>
