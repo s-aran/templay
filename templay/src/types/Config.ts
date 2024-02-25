@@ -1,4 +1,5 @@
 interface ConfigExternalEditor {
+	name: string;
 	command: string;
 	args: string;
 }

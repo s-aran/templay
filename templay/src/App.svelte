@@ -6,9 +6,10 @@
   import { onMount } from "svelte";
   import TemplateSelector from "./lib/components/TemplateSelector.svelte";
   import AboutDialog from "./lib/components/AboutDialog.svelte";
+  import LaunchExternalEditorButton from "./lib/components/LaunchExternalEditorButton.svelte";
 
   let content = "";
-
+  const getContent = () => content;
   const updateContent = (newContent: string) => {
     content = newContent;
   };
@@ -17,17 +18,18 @@
     console.info(content);
   };
 
-  let showSettingsDialog = false;
+  let visibleSettingsDialog = false;
   let config: Config = {
     version: 0,
     templates: [],
     external_editor: {
+      name: "...",
       command: "",
       args: "",
     },
   };
 
-  let showAboutDialog = false;
+  let visibleAboutDialog = false;
 
   const onSelectUpdate = (selected: TemplateObject) => {
     console.info(selected);
@@ -39,22 +41,31 @@
     console.info(config);
   });
 
+  const showSettingsDialog = () => {
+    visibleSettingsDialog = true;
+  };
+
+  const showAboutDialog = () => {
+    visibleAboutDialog = true;
+  };
+
   $: {
-    if (!showSettingsDialog && config.version > 0) {
+    if (!visibleSettingsDialog && config.version > 0) {
       invoke("save_config", { config });
     }
   }
+
+  let stopExternalEditorInterval = () => {};
 </script>
 
-<SettingsDialog bind:showDialog={showSettingsDialog} settingsData={{ config }}
+<SettingsDialog
+  bind:showDialog={visibleSettingsDialog}
+  settingsData={{ config }}
 ></SettingsDialog>
-<AboutDialog bind:showDialog={showAboutDialog}></AboutDialog>
+<AboutDialog bind:showDialog={visibleAboutDialog}></AboutDialog>
 
-<main class="container">
-  <div class="row">
-    <Greet />
-  </div>
-  <div>
+<header>
+  <div id="selector-area">
     <TemplateSelector
       options={config.templates.map((e, i) => ({
         id: i,
@@ -64,15 +75,46 @@
       updateSelectCallback={onSelectUpdate}
     />
   </div>
-  <div>
-    <Editor {content} updateContentCallback={updateContent} />
+  <div id="header-buttons">
+    <LaunchExternalEditorButton
+      {config}
+      getText={getContent}
+      updateText={updateContent}
+      bind:stopExternalEditorInterval
+    ></LaunchExternalEditorButton>
+    <button on:click={showSettingsDialog}>Settings</button>
+    <button on:click={showAboutDialog}>About</button>
   </div>
+</header>
 
-  <button on:click={button_click}>test</button>
-  <button on:click={() => (showSettingsDialog = true)}>Settings</button>
-  <button
-    on:click={() => {
-      showAboutDialog = true;
-    }}>About</button
-  >
+<main class="container">
+  <Editor
+    {content}
+    updateContentCallback={updateContent}
+    onInput={stopExternalEditorInterval}
+  />
 </main>
+
+<style lang="scss">
+  header {
+    position: fixed;
+    z-index: 8192;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  header > #selector-area {
+    float: left;
+  }
+
+  header > #header-buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  main {
+    height: 20rem;
+  }
+</style>

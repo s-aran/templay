@@ -12,7 +12,7 @@ use std::sync::Mutex;
 
 use config::config::Config;
 use external_editor::ArgParams;
-use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu, WindowEvent};
+use tauri::{CustomMenuItem, Manager, Menu, MenuItem, Submenu, Window, WindowEvent};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -161,13 +161,6 @@ fn open_with_external_editor(state: tauri::State<'_, TemplayState>, text: String
 }
 
 fn main() {
-    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
-    let close = CustomMenuItem::new("close".to_string(), "Close");
-    let submenu = Submenu::new("File", Menu::new().add_item(quit).add_item(close));
-    let menu = Menu::new()
-        .add_item(CustomMenuItem::new("hide", "Hide"))
-        .add_submenu(submenu);
-
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             greet,
@@ -176,16 +169,6 @@ fn main() {
             open_with_external_editor,
             read_tempfile,
         ])
-        .menu(menu)
-        .on_menu_event(|event| match event.menu_item_id() {
-            "quit" => {
-                std::process::exit(0);
-            }
-            "close" => {
-                event.window().close().unwrap();
-            }
-            _ => {}
-        })
         .setup(|app| {
             let state = TemplayState::new();
             app.manage(state);
