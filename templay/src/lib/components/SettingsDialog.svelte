@@ -18,6 +18,8 @@
     <Settings data={settingsData.config} />
     <hr />
     <!-- svelte-ignore a11y-autofocus -->
-    <button autofocus on:click={() => dialog.close()}>OK</button>
+    <button autofocus on:click={() => dialog.close()} style="width:100%"
+      >OK</button
+    >
   </div>
 </dialog>

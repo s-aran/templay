@@ -20,3 +20,11 @@
     {/each}
   </select>
 </div>
+
+<style lang="scss">
+  select {
+    margin: 10px;
+    width: 100%;
+    height: 2rem;
+  }
+</style>
