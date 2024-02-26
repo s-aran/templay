@@ -7,6 +7,7 @@
   import TemplateSelector from "./lib/components/TemplateSelector.svelte";
   import AboutDialog from "./lib/components/AboutDialog.svelte";
   import LaunchExternalEditorButton from "./lib/components/LaunchExternalEditorButton.svelte";
+  import CopyButton from "./lib/components/CopyButton.svelte";
 
   let content = "";
   const getContent = () => content;
@@ -76,6 +77,7 @@
     />
   </div>
   <div id="header-buttons">
+    <CopyButton {content} />
     <LaunchExternalEditorButton
       {config}
       getText={getContent}
