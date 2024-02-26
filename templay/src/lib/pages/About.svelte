@@ -9,6 +9,6 @@
 
   <div>
     <span> Version: </span>
-    <span> 0.01 </span>
+    <span> 0.0.2 </span>
   </div>
 </div>
